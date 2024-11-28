@@ -151,6 +151,7 @@ pub struct EraTestNode {
     // If the block_time is an integer, f64::to_string() will output without a decimal point
     // which allows this to be backwards compatible.
     block_time: Option<f64>,
+    no_mine: bool,
     chain_id: Option<ChainId>,
     // TODO
     // mnemonic: Option<String>,
@@ -229,6 +230,12 @@ impl EraTestNode {
     /// Sets the block-time in seconds which will be used when the `era_test_node` instance is launched.
     pub const fn block_time(mut self, block_time: u64) -> Self {
         self.block_time = Some(block_time as f64);
+        self
+    }
+
+    /// Sets the no-mine status which will be used when the `era_test_node` instance is launched.
+    pub const fn no_mine(mut self) -> Self {
+        self.no_mine = true;
         self
     }
 
@@ -315,6 +322,10 @@ impl EraTestNode {
 
         if let Some(block_time) = self.block_time {
             cmd.arg("-b").arg(block_time.to_string());
+        }
+
+        if self.no_mine {
+            cmd.arg("--no-mine");
         }
 
         cmd.args(self.args);
